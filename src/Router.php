@@ -17,6 +17,9 @@ class Router
     private const PATCH_METHOD = "PATCH";
     private const DELETE_METHOD = "DELETE";
 
+    private Request $request;
+    private Response $response;
+
     private array $methods = [
         "get","post","patch","put","delete","group"
     ];
@@ -28,8 +31,7 @@ class Router
     private static ?string $request_method = null;
     private string $base_path = "/";
     private static ?string $collection_path = null;
-    private Request $request;
-    private Response $response;
+
 
 
     public function __construct()
@@ -100,7 +102,7 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    public function patch(string $path, array $handler):void
+    public function patch(string $path, array | callable $handler):void
     {
         if($_SERVER['REQUEST_METHOD'] === self::PATCH_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
@@ -118,7 +120,7 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    public function put(string $path, array $handler):void
+    public function put(string $path, array | callable $handler):void
     {
         if($_SERVER['REQUEST_METHOD'] === self::PUT_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
@@ -136,7 +138,7 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    public function delete(string $path, array $handler):void
+    public function delete(string $path, array | callable $handler):void
     {
         if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
