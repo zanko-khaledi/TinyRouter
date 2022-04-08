@@ -1,10 +1,5 @@
 {
     "name": "zanko/tiny-router",
-    "autoload": {
-        "psr-4": {
-            "Zanko\\TinyRouter\\": "src/"
-        }
-    },
     "authors": [
         {
             "name": "Zanko Khaledi",
