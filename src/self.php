@@ -72,7 +72,7 @@ class Router
      */
     public function post(string $path, array $handler):void
     {
-        if($_SERVER['REQUEST_METHOD'] === Router::POST_METHOD){
+        if($_SERVER['REQUEST_METHOD'] === self::POST_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
             $this->run($path,$handler);
         }
@@ -85,7 +85,7 @@ class Router
      */
     public function patch(string $path, array $handler):void
     {
-        if($_SERVER['REQUEST_METHOD'] === Router::PATCH_METHOD){
+        if($_SERVER['REQUEST_METHOD'] === self::PATCH_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
             $this->run($path,$handler);
         }
@@ -98,7 +98,7 @@ class Router
      */
     public function put(string $path, array $handler):void
     {
-        if($_SERVER['REQUEST_METHOD'] === Router::PUT_METHOD){
+        if($_SERVER['REQUEST_METHOD'] === self::PUT_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
             $this->run($path,$handler);
         }
@@ -111,7 +111,7 @@ class Router
      */
     public function delete(string $path, array $handler):void
     {
-        if($_SERVER['REQUEST_METHOD'] === Router::DELETE_METHOD){
+        if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
             $this->run($path,$handler);
         }
