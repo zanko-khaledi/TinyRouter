@@ -6,7 +6,7 @@ use App\Http\Request;
 use App\Http\Response;
 use BadMethodCallException;
 use Exception;
-use function App\RouteAssists\route;
+
 
 class Router
 {
@@ -25,13 +25,9 @@ class Router
         "collection"
     ];
 
-
     private static ?string $request_method = null;
-
     private ?string $base_path = null;
-
-    private static ?string $bath_path = null;
-
+    private static ?string $collection_path = null;
     private Request $request;
     private Response $response;
 
@@ -39,8 +35,8 @@ class Router
     public function __construct()
     {
 
-        if(self::$bath_path !== null){
-            $this->base_path = self::$bath_path;
+        if(self::$collection_path !== null){
+            $this->base_path = self::$collection_path;
         }
 
        $this->request = new Request();
@@ -52,7 +48,7 @@ class Router
      * @param string $name
      * @param array $arguments
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name,array $arguments)
     {
         if(!in_array($name,$this->methods)){
             throw new BadMethodCallException("method {$name} doesn't exists!");
@@ -67,11 +63,16 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    public function get(string $path, array $handler):void
+    public function get(string $path, array | callable $handler):void
     {
          if($_SERVER['REQUEST_METHOD'] === self::GET_METHOD){
              self::$request_method = $_SERVER['REQUEST_METHOD'];
-             $this->run($path,$handler);
+
+             if(is_callable($handler)){
+                 $this->runCallbackFunc($path,$handler);
+             }else{
+                 $this->run($path,$handler);
+             }
          }
     }
 
@@ -81,11 +82,16 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    public function post(string $path, array $handler):void
+    public function post(string $path, array | callable $handler):void
     {
         if($_SERVER['REQUEST_METHOD'] === self::POST_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
-            $this->run($path,$handler);
+
+            if(is_callable($handler)){
+                $this->runCallbackFunc($path,$handler);
+            }else{
+                $this->run($path,$handler);
+            }
         }
     }
 
@@ -98,7 +104,12 @@ class Router
     {
         if($_SERVER['REQUEST_METHOD'] === self::PATCH_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
-            $this->run($path,$handler);
+
+            if(is_callable($handler)){
+                $this->runCallbackFunc($path,$handler);
+            }else{
+                $this->run($path,$handler);
+            }
         }
     }
 
@@ -111,7 +122,12 @@ class Router
     {
         if($_SERVER['REQUEST_METHOD'] === self::PUT_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
-            $this->run($path,$handler);
+
+            if(is_callable($handler)){
+                $this->runCallbackFunc($path,$handler);
+            }else{
+                $this->run($path,$handler);
+            }
         }
     }
 
@@ -124,7 +140,13 @@ class Router
     {
         if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
-            $this->run($path,$handler);
+
+
+            if(is_callable($handler)){
+                $this->runCallbackFunc($path,$handler);
+            }else{
+                $this->run($path,$handler);
+            }
         }
     }
 
@@ -156,10 +178,27 @@ class Router
      * @param string $path
      * @param callable $callback
      */
-    public static function collection(string $path,callable $callback)
+    public static function collection(string $path,callable $callback):void
     {
-         self::$bath_path = $path;
+         self::$collection_path = $path;
          $callback(new Router());
+    }
+
+
+    /**
+     * @param string $path
+     * @param callable $callback
+     * @return void
+     */
+    private function runCallbackFunc(string $path, callable $callback)
+    {
+        $uri = $this->base_path !== null ? $this->base_path.$path : $path;
+
+        $request_uri = parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
+
+        if($request_uri === $uri && $_SERVER["REQUEST_METHOD"] === self::$request_method){
+            $callback($this->request,$this->response);
+        }
     }
 
     /**
@@ -167,31 +206,29 @@ class Router
      * @param array $handler
      * @throws Exception
      */
-    protected function run(string $path, array $handler)
+    private function run(string $path, array $handler)
     {
-        $real_path = $this->base_path !== null ? $this->base_path.$path : $path;
+        $uri = $this->base_path !== null ? $this->base_path.$path : $path;
 
         $request_uri = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
 
         $request_method = $_SERVER['REQUEST_METHOD'];
 
-        if($real_path === $request_uri && $request_method === self::$request_method){
-            $this->handler_instance($handler);
+        if($uri === $request_uri && $request_method === self::$request_method){
+            $this->handlerInstance($handler);
         }
     }
-
-
 
 
     /**
      * @param array $handler
      */
-    protected function handler_instance(array $handler): void
+    private function handlerInstance(array $handler): void
     {
         $instance = new $handler[0];
         $instance->{$handler[1]}($this->request,$this->response);
-
     }
+
 
     /**
      * @throws Exception
@@ -200,5 +237,6 @@ class Router
     {
         throw new Exception($REQUEST_METHOD);
     }
+
 
 }

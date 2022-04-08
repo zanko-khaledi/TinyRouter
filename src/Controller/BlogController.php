@@ -5,6 +5,9 @@ namespace App\Controller;
 
 use App\Http\Request;
 use App\Http\Response;
+use App\Router;
+
+require_once __DIR__."/../Router.php";
 
 class BlogController
 {
@@ -12,7 +15,7 @@ class BlogController
 
     public function list(Request $request,Response $response)
     {
-         echo $response->json("Hello World",200);
+         echo "Hello World";
     }
 
 

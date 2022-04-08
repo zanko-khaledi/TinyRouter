@@ -11,13 +11,19 @@ try {
 
     $router = new Router();
 
-    $router->get("/blog",[BlogController::class,"list"]);
+    $router->get("/blog",[BlogController::class,"list"],"blog");
 
     Router::collection("/home",function (Router $router){
 
-        $router->get("/zanko",[BlogController::class,"list"]);
+        $router->get("/zanko",[BlogController::class,"list"],"zanko");
 
-        $router->get("/ferry",[BlogController::class,"all"])->name("ferry");
+        $router->get("/teddy",function (\App\Http\Request $request,\App\Http\Response $response){
+            echo  $response->json([
+                "name" => $request->get("name") ? : "zanko"
+            ]);
+        });
+
+        $router->get("/ferry",[BlogController::class,"all"]);
     });
 
 
