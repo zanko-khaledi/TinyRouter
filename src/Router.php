@@ -26,7 +26,7 @@ class Router
     ];
 
     private static ?string $request_method = null;
-    private ?string $base_path = null;
+    private string $base_path = "/";
     private static ?string $collection_path = null;
     private Request $request;
     private Response $response;
@@ -141,7 +141,6 @@ class Router
         if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-
             if(is_callable($handler)){
                 $this->runCallbackFunc($path,$handler);
             }else{
@@ -192,7 +191,8 @@ class Router
      */
     private function runCallbackFunc(string $path, callable $callback)
     {
-        $uri = $this->base_path !== null ? $this->base_path.$path : $path;
+
+        $uri = $this->base_path === "/" ? $path : $this->base_path.$path;
 
         $request_uri = parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
 
@@ -208,7 +208,7 @@ class Router
      */
     private function run(string $path, array $handler)
     {
-        $uri = $this->base_path !== null ? $this->base_path.$path : $path;
+        $uri = $this->base_path === "/" ? $path : $this->base_path.$path;
 
         $request_uri = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
 

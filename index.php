@@ -11,11 +11,11 @@ try {
 
     $router = new Router();
 
-    $router->get("/blog",[BlogController::class,"list"],"blog");
+    $router->get("/blog",[BlogController::class,"list"]);
 
     Router::collection("/home",function (Router $router){
 
-        $router->get("/zanko",[BlogController::class,"list"],"zanko");
+        $router->get("/zanko",[BlogController::class,"list"]);
 
         $router->get("/teddy",function (\App\Http\Request $request,\App\Http\Response $response){
             echo  $response->json([
