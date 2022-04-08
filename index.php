@@ -1,7 +1,7 @@
 <?php
 
 use App\Controller\BlogController;
-use App\Router;
+use App\self;
 
 
 require_once __DIR__."/vendor/autoload.php";
@@ -9,7 +9,7 @@ require_once __DIR__."/vendor/autoload.php";
 
 try {
 
-    $router = new Router();
+    $router = new self();
 
     $router->get("/blog",[BlogController::class,"list"]);
 
