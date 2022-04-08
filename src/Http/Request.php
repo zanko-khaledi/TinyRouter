@@ -11,7 +11,11 @@ use Exception;
 class Request implements IRequest
 {
 
+    /**
+     * @var object
+     */
     private object $request;
+
 
     public function __construct()
     {
@@ -27,7 +31,7 @@ class Request implements IRequest
     /**
      * @return object
      */
-    public function getRequest():object
+    public function getServerObject():object
     {
         return $this->request;
     }
@@ -38,7 +42,16 @@ class Request implements IRequest
      */
     public function get(string $key): mixed
     {
-            return $_GET[$key];
+        return $_GET[$key];
+    }
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    public function post(string $key):mixed
+    {
+        return $_POST[$key];
     }
 
     /**
@@ -70,6 +83,15 @@ class Request implements IRequest
     }
 
     /**
+     * @param string|null $key
+     * @return mixed
+     */
+    public function getRequest(string $key = null): mixed
+    {
+        return $key === null ? $_REQUEST : $_REQUEST[$key];
+    }
+
+    /**
      * @return array
      */
     public function queryString(): array
@@ -93,4 +115,5 @@ class Request implements IRequest
     {
         return (array)$this->request;
     }
+
 }

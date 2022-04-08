@@ -15,6 +15,12 @@ interface IRequest
      * @param string $key
      * @return mixed
      */
+    public function post(string $key) : mixed;
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
     public function input(string $key): mixed;
 
     /**
@@ -27,6 +33,11 @@ interface IRequest
      * @return mixed
      */
     public function getContent(): mixed;
+
+    /**
+     * @return mixed
+     */
+    public function getRequest(?string $key=null):mixed;
 
     /**
      * @return mixed
