@@ -13,21 +13,12 @@ try {
 
     $router->get("/blog",[BlogController::class,"list"]);
 
+    Router::collection("/home",function (Router $router){
 
-    $router->get("/blog/update",[BlogController::class,"update"]);
+        $router->get("/zanko",[BlogController::class,"list"]);
 
-    $router->post("/blog/create",[BlogController::class,'create']);
-
-
-    $router->group("/zanko",function () use ($router){
-
-        $router->get("/name",[BlogController::class,"list"]);
-
-        $router->get("/last_name",[BlogController::class,"lastName"]);
-
+        $router->get("/ferry",[BlogController::class,"all"])->name("ferry");
     });
-
-    $router->delete("/t",[BlogController::class,"list"]);
 
 
 }catch ( BadMethodCallException $e){

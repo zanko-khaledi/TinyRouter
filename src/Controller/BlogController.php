@@ -12,26 +12,13 @@ class BlogController
 
     public function list(Request $request,Response $response)
     {
-         echo "Hello ".$request->get("name");
+         echo $response->json("Hello World",200);
     }
 
 
-    public function create(Request $request,Response $response)
+    public function all(Request $request,Response $response)
     {
-        echo  $request->input("name");
-    }
-
-    public function update()
-    {
-        echo  "update";
-    }
-
-
-    public function lastName(Request $request,Response $response)
-    {
-        echo  $response->json([
-            "lastName" => $request->get("last")
-        ]);
+         echo $response->json("Hello Ferry",200);
     }
 
 }

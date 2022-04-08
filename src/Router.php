@@ -6,6 +6,7 @@ use App\Http\Request;
 use App\Http\Response;
 use BadMethodCallException;
 use Exception;
+use function App\RouteAssists\route;
 
 class Router
 {
@@ -20,11 +21,16 @@ class Router
         "get","post","patch","put","delete","group"
     ];
 
+    private static array $static_methods= [
+        "collection"
+    ];
 
 
     private static ?string $request_method = null;
 
     private ?string $base_path = null;
+
+    private static ?string $bath_path = null;
 
     private Request $request;
     private Response $response;
@@ -32,6 +38,11 @@ class Router
 
     public function __construct()
     {
+
+        if(self::$bath_path !== null){
+            $this->base_path = self::$bath_path;
+        }
+
        $this->request = new Request();
        $this->response = new Response();
     }
@@ -125,8 +136,30 @@ class Router
     public function group(string $collection,callable $handler)
     {
          $this->base_path = $collection;
-         self::$request_method = $_SERVER['REQUEST_METHOD'];
          $handler($this);
+    }
+
+    /**
+     * @param string $name
+     * @param array $arguments
+     */
+    public static function __callStatic(string $name, array $arguments)
+    {
+        if(!in_array($name,self::$static_methods)){
+            throw new BadMethodCallException("method {$name} doesn't exists!");
+        }else{
+            static::{$name}($arguments);
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param callable $callback
+     */
+    public static function collection(string $path,callable $callback)
+    {
+         self::$bath_path = $path;
+         $callback(new Router());
     }
 
     /**
@@ -136,7 +169,6 @@ class Router
      */
     protected function run(string $path, array $handler)
     {
-
         $real_path = $this->base_path !== null ? $this->base_path.$path : $path;
 
         $request_uri = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
@@ -149,6 +181,8 @@ class Router
     }
 
 
+
+
     /**
      * @param array $handler
      */
@@ -156,6 +190,7 @@ class Router
     {
         $instance = new $handler[0];
         $instance->{$handler[1]}($this->request,$this->response);
+
     }
 
     /**

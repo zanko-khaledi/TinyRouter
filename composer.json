@@ -11,6 +11,9 @@
         "symfony/http-foundation": "^6.0",
       "ext-http": "*"
     },
+    "scripts": {
+        "run" : "php -S localhost:8000"
+    },
     "autoload" : {
         "psr-4": {
             "App\\" : "src/"
