@@ -17,8 +17,6 @@ class Router
     private const PATCH_METHOD = "PATCH";
     private const DELETE_METHOD = "DELETE";
 
-    private Request $request;
-    private Response $response;
 
     private array $methods = [
         "get","post","patch","put","delete","group"
@@ -36,13 +34,9 @@ class Router
 
     public function __construct()
     {
-
         if(self::$collection_path !== null){
             $this->base_path = self::$collection_path;
         }
-
-       $this->request = new Request();
-       $this->response = new Response();
     }
 
 
@@ -179,7 +173,7 @@ class Router
         $request_uri = parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
 
         if($request_uri === $uri && $_SERVER["REQUEST_METHOD"] === self::$request_method){
-            $callback($this->request,$this->response);
+            $callback(new Request(),new Response());
         }
     }
 
@@ -207,7 +201,7 @@ class Router
     private function handlerInstance(array $handler): void
     {
         $instance = new $handler[0];
-        $instance->{$handler[1]}($this->request,$this->response);
+        $instance->{$handler[1]}(new Request(),new Response());
     }
 
 
