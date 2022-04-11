@@ -30,7 +30,7 @@ try {
         });
     });
 
-
+    $router->patch("/blog/zanko",[BlogController::class,"update"]);
 }catch ( BadMethodCallException $e){
     echo "<br>";
     echo "<b>{$e}</b>";

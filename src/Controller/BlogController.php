@@ -24,4 +24,9 @@ class BlogController
          echo $response->json("Hello Ferry",200);
     }
 
+    public function update()
+    {
+        echo  "Update";
+    }
+
 }

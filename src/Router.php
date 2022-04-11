@@ -62,44 +62,36 @@ class Router
 
     /**
      * @param string $path
-     * @param array $handler
+     * @param array|callable $handler
      * @throws Exception
      */
     public function get(string $path, array | callable $handler):void
     {
          if($_SERVER['REQUEST_METHOD'] === self::GET_METHOD){
              self::$request_method = $_SERVER['REQUEST_METHOD'];
-
-             if(is_callable($handler)){
-                 $this->runCallbackFunc($path,$handler);
-             }else{
-                 $this->run($path,$handler);
-             }
+             $this->run($path,$handler);
          }
     }
 
 
     /**
      * @param string $path
-     * @param array $handler
+     * @param array|callable $handler
      * @throws Exception
      */
     public function post(string $path, array | callable $handler):void
     {
+
         if($_SERVER['REQUEST_METHOD'] === self::POST_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-            if(is_callable($handler)){
-                $this->runCallbackFunc($path,$handler);
-            }else{
-                $this->run($path,$handler);
-            }
+            $this->run($path,$handler);
         }
     }
 
     /**
      * @param string $path
-     * @param array $handler
+     * @param array|callable $handler
      * @throws Exception
      */
     public function patch(string $path, array | callable $handler):void
@@ -107,17 +99,13 @@ class Router
         if($_SERVER['REQUEST_METHOD'] === self::PATCH_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-            if(is_callable($handler)){
-                $this->runCallbackFunc($path,$handler);
-            }else{
-                $this->run($path,$handler);
-            }
+            $this->run($path,$handler);
         }
     }
 
     /**
      * @param string $path
-     * @param array $handler
+     * @param array|callable $handler
      * @throws Exception
      */
     public function put(string $path, array | callable $handler):void
@@ -125,17 +113,13 @@ class Router
         if($_SERVER['REQUEST_METHOD'] === self::PUT_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-            if(is_callable($handler)){
-                $this->runCallbackFunc($path,$handler);
-            }else{
-                $this->run($path,$handler);
-            }
+            $this->run($path,$handler);
         }
     }
 
     /**
      * @param string $path
-     * @param array $handler
+     * @param array|callable $handler
      * @throws Exception
      */
     public function delete(string $path, array | callable $handler):void
@@ -143,11 +127,7 @@ class Router
         if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
             self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-            if(is_callable($handler)){
-                $this->runCallbackFunc($path,$handler);
-            }else{
-                $this->run($path,$handler);
-            }
+            $this->run($path,$handler);
         }
     }
 
@@ -205,10 +185,9 @@ class Router
 
     /**
      * @param string $path
-     * @param array $handler
-     * @throws Exception
+     * @param array|callable $handler
      */
-    private function run(string $path, array $handler)
+    private function run(string $path, array | callable $handler)
     {
         $uri = $this->base_path === "/" ? $path : $this->base_path.$path;
 
@@ -217,7 +196,7 @@ class Router
         $request_method = $_SERVER['REQUEST_METHOD'];
 
         if($uri === $request_uri && $request_method === self::$request_method){
-            $this->handlerInstance($handler);
+            is_callable($handler) && !is_array($handler) ? $this->runCallbackFunc($path,$handler) : $this->handlerInstance($handler);
         }
     }
 
@@ -229,15 +208,6 @@ class Router
     {
         $instance = new $handler[0];
         $instance->{$handler[1]}($this->request,$this->response);
-    }
-
-
-    /**
-     * @throws Exception
-     */
-    private function exceptionHandler(mixed $REQUEST_METHOD)
-    {
-        throw new Exception($REQUEST_METHOD);
     }
 
 
