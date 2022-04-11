@@ -24,6 +24,10 @@ try {
         });
 
         $router->get("/ferry",[BlogController::class,"all"]);
+
+        $router->post("/create",function (\App\Http\Request $request,\App\Http\Response $response){
+            echo  $response->json($request->getRequest());
+        });
     });
 
 

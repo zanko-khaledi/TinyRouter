@@ -3,10 +3,11 @@
 namespace App\Http;
 
 require_once __DIR__."/../IRequest.php";
-
 use App\IRequest;
 
 use Exception;
+use stdClass;
+
 
 class Request implements IRequest
 {
@@ -42,7 +43,7 @@ class Request implements IRequest
      */
     public function get(string $key): mixed
     {
-        return $_GET[$key];
+        return $_GET[$key] ?? $_GET;
     }
 
     /**
@@ -51,7 +52,7 @@ class Request implements IRequest
      */
     public function post(string $key):mixed
     {
-        return $_POST[$key];
+        return $_POST[$key] ?? $_POST;
     }
 
     /**
@@ -60,24 +61,13 @@ class Request implements IRequest
      */
     public function input(string $key): mixed
     {
-        return json_decode(file_get_contents("php://input"))->{$key};
+        return json_decode(file_get_contents("php://input"))->{$key} ?? new stdClass();
     }
 
     /**
-     * @param array $keys
-     * @return mixed|void
+     * @return stdClass|array|string
      */
-    public function only(array $keys):array
-    {
-        if(in_array($keys,json_decode(file_get_contents("php://input"),true))){
-            return json_decode(file_get_contents("php://input"));
-        }
-    }
-
-    /**
-     * @return string|bool
-     */
-    public function getContent(): string|bool
+    public function getContent():stdClass | array | string
     {
         return json_decode(file_get_contents("php://input"));
     }
@@ -88,7 +78,7 @@ class Request implements IRequest
      */
     public function getRequest(string $key = null): mixed
     {
-        return $key === null ? $_REQUEST : $_REQUEST[$key];
+        return $_REQUEST[$key] ?? $_REQUEST;
     }
 
     /**

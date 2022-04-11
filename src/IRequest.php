@@ -23,11 +23,6 @@ interface IRequest
      */
     public function input(string $key): mixed;
 
-    /**
-     * @param array $keys
-     * @return mixed
-     */
-    public function only(array $keys): mixed;
 
     /**
      * @return mixed
