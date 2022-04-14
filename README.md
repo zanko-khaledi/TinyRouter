@@ -6,8 +6,8 @@ PHP Version 8.1
 
 for download script via git :
 
-$ mkdir project-name && cd  project-name
-$ git clone https://github.com/zanko-khaledi/TinyRouter.git
+     $ mkdir project-name && cd  project-name
+     $ git clone https://github.com/zanko-khaledi/TinyRouter.git
 
 usnig router inside the script.
 eg:
