@@ -17,7 +17,8 @@ index.php
     <?php
     
     use \App\Router;
-    use \App\Http;
+    use \App\Http\Request;
+    use \App\Http\Response;
 
     require_once __DIR__."/TinyRouter/src/Router.php";
 
