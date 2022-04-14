@@ -94,15 +94,14 @@ class Router
     /**
      * @param string $path
      * @param array|callable $handler
+     * @throws ExceptionAlias
      */
     public static function get(string $path, array|callable $handler)
     {
 
         $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-        if($_SERVER["REQUEST_METHOD"] === static::GET_METHOD){
-            static::run($path,$handler);
-        }
+        if($_SERVER["REQUEST_METHOD"] === static::GET_METHOD) static::run($path,$handler);
     }
 
     /**
@@ -114,9 +113,7 @@ class Router
     {
        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-       if($_SERVER["REQUEST_METHOD"] === static::POST_METHOD){
-           static::run($path,$handler);
-       }
+       if($_SERVER["REQUEST_METHOD"] === static::POST_METHOD) static::run($path,$handler);
     }
 
     /**
@@ -128,9 +125,7 @@ class Router
     {
        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-       if($_SERVER["REQUEST_METHOD"] === static::PUT_METHOD){
-           static::run($path,$handler);
-       }
+       if($_SERVER["REQUEST_METHOD"] === static::PUT_METHOD) static::run($path,$handler);
     }
 
     /**
@@ -142,9 +137,7 @@ class Router
     {
         $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-        if($_SERVER["REQUEST_METHOD"] === static::PATCH_METHOD){
-            static::run($path,$handler);
-        }
+        if($_SERVER["REQUEST_METHOD"] === static::PATCH_METHOD) static::run($path,$handler);
     }
 
     /**
@@ -156,9 +149,7 @@ class Router
     {
         $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-        if($_SERVER["REQUEST_METHOD"] === static::DELETE_METHOD){
-            static::run($path,$handler);
-        }
+        if($_SERVER["REQUEST_METHOD"] === static::DELETE_METHOD) static::run($path,$handler);
     }
 
     /**
