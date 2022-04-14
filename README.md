@@ -12,9 +12,9 @@ for download script via git :
 usnig router inside the script.
 eg:
  
-index.php <?php
+index.php 
 
-  
+    <?php
     
     use \App\Router;
     use \App\Http;
