@@ -5,8 +5,7 @@ download the release and execute Router instance on "index.php" root project.
 
 eg:
  
-#### index.php
-####<?php
+index.php <?php
 
   
     
