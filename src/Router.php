@@ -108,8 +108,9 @@ class Router
     /**
      * @param string $path
      * @param callable|array $handler
+     * @throws ExceptionAlias
      */
-    public function post(string $path,callable | array $handler)
+    public static function post(string $path,callable | array $handler)
     {
        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
@@ -121,8 +122,9 @@ class Router
     /**
      * @param string $path
      * @param callable|array $handler
+     * @throws ExceptionAlias
      */
-    public function put(string $path,callable | array $handler)
+    public static function put(string $path,callable | array $handler)
     {
        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
@@ -134,8 +136,9 @@ class Router
     /**
      * @param string $path
      * @param callable|array $handler
+     * @throws ExceptionAlias
      */
-    public function patch(string $path,callable | array $handler)
+    public static function patch(string $path,callable | array $handler)
     {
         $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
@@ -147,8 +150,9 @@ class Router
     /**
      * @param string $path
      * @param callable|array $handler
+     * @throws ExceptionAlias
      */
-    public function delete(string $path,callable | array $handler)
+    public static function delete(string $path,callable | array $handler)
     {
         $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 

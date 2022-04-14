@@ -11,18 +11,7 @@ require_once __DIR__."/vendor/autoload.php";
 
 try {
 
-    Router::execute();
-
-    Router::collection("/",function (){
-
-        Router::get("/bar",[BlogController::class,"list"]);
-
-        Router::get("/foo",function (Request $request,Response $response){
-            var_dump(Router::execute() === Router::execute());
-        });
-
-        Router::get("/foo/bar",[BlogController::class,"all"]);
-    });
+    require_once __DIR__."/Routes/api.php";
 
 }catch (Exception | BadMethodCallException $e){
     echo $e->getMessage();
