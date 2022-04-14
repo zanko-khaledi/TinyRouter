@@ -1,12 +1,11 @@
-###TinyRouter
+TinyRouter
 
 For use this module to you'r php pure project's you should first 
 download the release and execute Router instance on "index.php" root project.
 
-####eg:
+eg:
  
-#### index.php
-####<?php
+index.php <?php
 
   
     
