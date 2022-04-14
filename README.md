@@ -35,8 +35,8 @@ index.php
         */
 
         Router::collection("/home",function(){
-           Router::get("/blog",[BlogController,"list"]);
-           Router::post("/blog/create",[BlogController,"create"]);
+           Router::get("/blog",[BlogController::class,"list"]);
+           Router::post("/blog/create",[BlogController::class,"create"]);
          });
 
        /*
