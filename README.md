@@ -27,7 +27,9 @@ index.php
         Router::execute();
 
         Router::get("/bar",function(Request $request,Response $response){
+        
            echo $response->json('Hello World',200);
+           
          });
 
         /* 
@@ -35,8 +37,11 @@ index.php
         */
 
         Router::collection("/home",function(){
+        
            Router::get("/blog",[BlogController::class,"list"]);
+           
            Router::post("/blog/create",[BlogController::class,"create"]);
+           
          });
 
        /*
@@ -44,5 +49,7 @@ index.php
         */
 
      } catch(Exception | BadMethodCallException $e){
+     
          echo $e->getMessage();
+         
      }
