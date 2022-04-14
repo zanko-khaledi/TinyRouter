@@ -4,6 +4,12 @@ For use this module to you'r php pure project's you should first
 download the release and execute Router instance on "index.php" root project.
 PHP Version 8.1
 
+for download script via git :
+
+$ mkdir project-name && cd  project-name
+$ git clone https://github.com/zanko-khaledi/TinyRouter.git
+
+usnig router inside the script.
 eg:
  
 index.php <?php
