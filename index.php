@@ -1,6 +1,8 @@
 <?php
 
 use App\Controller\BlogController;
+use App\Http\Request;
+use App\Http\Response;
 use App\Router;
 
 
@@ -9,30 +11,20 @@ require_once __DIR__."/vendor/autoload.php";
 
 try {
 
-    $router = new Router();
+    Router::execute();
 
-    $router->get("/blog",[BlogController::class,"list"]);
+    Router::collection("/",function (){
 
-    Router::collection("/home",function (Router $router){
+        Router::get("/bar",[BlogController::class,"list"]);
 
-        $router->get("/zanko",[BlogController::class,"list"]);
-
-        $router->get("/teddy",function (\App\Http\Request $request,\App\Http\Response $response){
-            echo  $response->json([
-                "name" => $request->get("name") ? : "zanko"
-            ]);
+        Router::get("/foo",function (Request $request,Response $response){
+            var_dump(Router::execute() === Router::execute());
         });
 
-        $router->get("/ferry",[BlogController::class,"all"]);
-
-        $router->post("/create",function (\App\Http\Request $request,\App\Http\Response $response){
-            echo  $response->json($request->getRequest());
-        });
+        Router::get("/foo/bar",[BlogController::class,"all"]);
     });
 
-    $router->patch("/blog/zanko",[BlogController::class,"update"]);
-}catch ( BadMethodCallException $e){
-    echo "<br>";
-    echo "<b>{$e}</b>";
+}catch (Exception | BadMethodCallException $e){
+    echo $e->getMessage();
 }
 

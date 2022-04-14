@@ -5,11 +5,13 @@ namespace App;
 use App\Http\Request;
 use App\Http\Response;
 use BadMethodCallException;
-use Exception;
+use Exception as ExceptionAlias;
 
 
 class Router
 {
+
+    private static array $instance = [];
 
     private const GET_METHOD = "GET";
     private const POST_METHOD = "POST";
@@ -18,123 +20,28 @@ class Router
     private const DELETE_METHOD = "DELETE";
 
 
-    private array $methods = [
-        "get","post","patch","put","delete","group"
+    private static array $methods = [
+        "execute","get", "post", "patch", "put", "delete", "collection"
     ];
 
-    private static array $static_methods= [
-        "collection"
-    ];
-
-    private static ?string $request_method = null;
-    private string $base_path = "/";
-    private static ?string $collection_path = null;
+    private static ?string $collection_path = "/";
 
 
-
-    public function __construct()
-    {
-        if(self::$collection_path !== null){
-            $this->base_path = self::$collection_path;
-        }
-    }
-
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     */
-    public function __call(string $name,array $arguments)
-    {
-        if(!in_array($name,$this->methods)){
-            throw new BadMethodCallException("method {$name} doesn't exists!");
-        }else{
-            $this->{$name}($arguments);
-        }
-    }
-
-
-    /**
-     * @param string $path
-     * @param array|callable $handler
-     * @throws Exception
-     */
-    public function get(string $path, array | callable $handler):void
-    {
-         if($_SERVER['REQUEST_METHOD'] === self::GET_METHOD){
-             self::$request_method = $_SERVER['REQUEST_METHOD'];
-             $this->run($path,$handler);
-         }
-    }
-
-
-    /**
-     * @param string $path
-     * @param array|callable $handler
-     * @throws Exception
-     */
-    public function post(string $path, array | callable $handler):void
+    private function __construct()
     {
 
-        if($_SERVER['REQUEST_METHOD'] === self::POST_METHOD){
-            self::$request_method = $_SERVER['REQUEST_METHOD'];
-
-            $this->run($path,$handler);
-        }
     }
 
-    /**
-     * @param string $path
-     * @param array|callable $handler
-     * @throws Exception
-     */
-    public function patch(string $path, array | callable $handler):void
+    private function __clone(): void
     {
-        if($_SERVER['REQUEST_METHOD'] === self::PATCH_METHOD){
-            self::$request_method = $_SERVER['REQUEST_METHOD'];
 
-            $this->run($path,$handler);
-        }
     }
 
-    /**
-     * @param string $path
-     * @param array|callable $handler
-     * @throws Exception
-     */
-    public function put(string $path, array | callable $handler):void
+    public function __serialize(): array
     {
-        if($_SERVER['REQUEST_METHOD'] === self::PUT_METHOD){
-            self::$request_method = $_SERVER['REQUEST_METHOD'];
-
-            $this->run($path,$handler);
-        }
+        return unserialize(serialize());
     }
 
-    /**
-     * @param string $path
-     * @param array|callable $handler
-     * @throws Exception
-     */
-    public function delete(string $path, array | callable $handler):void
-    {
-        if($_SERVER['REQUEST_METHOD'] === self::DELETE_METHOD){
-            self::$request_method = $_SERVER['REQUEST_METHOD'];
-
-            $this->run($path,$handler);
-        }
-    }
-
-
-    /**
-     * @param string $collection
-     * @param callable
-     */
-    public function group(string $collection,callable $handler)
-    {
-         $this->base_path = $collection;
-         $handler($this);
-    }
 
     /**
      * @param string $name
@@ -142,12 +49,36 @@ class Router
      */
     public static function __callStatic(string $name, array $arguments)
     {
-        if(!in_array($name,self::$static_methods)){
-            throw new BadMethodCallException("method {$name} doesn't exists!");
+        if (!in_array($name, static::$methods)) {
+            throw new BadMethodCallException("Method {$name} not exists on this route!");
         }else{
             static::{$name}($arguments);
         }
     }
+
+    /**
+     * @throws ExceptionAlias
+     */
+    public function __wakeup()
+    {
+        throw new \Exception("Cannot unserialize a singleton.");
+    }
+
+    /**
+     * @return Router
+     */
+    public static function execute():Router
+    {
+        $class = static::class;
+
+        if(!isset(static::$instance[$class])){
+            static::$instance[$class] = new static();
+        }
+
+        return static::$instance[$class];
+    }
+
+
 
     /**
      * @param string $path
@@ -155,54 +86,106 @@ class Router
      */
     public static function collection(string $path,callable $callback):void
     {
-         self::$collection_path = $path;
-         $callback(new Router());
+        static::$collection_path = $path;
+        $callback(new Router());
     }
 
-
-    /**
-     * @param string $path
-     * @param callable $callback
-     * @return void
-     */
-    private function runCallbackFunc(string $path, callable $callback)
-    {
-
-        $uri = $this->base_path === "/" ? $path : $this->base_path.$path;
-
-        $request_uri = parse_url($_SERVER["REQUEST_URI"],PHP_URL_PATH);
-
-        if($request_uri === $uri && $_SERVER["REQUEST_METHOD"] === self::$request_method){
-            $callback(new Request(),new Response());
-        }
-    }
 
     /**
      * @param string $path
      * @param array|callable $handler
      */
-    private function run(string $path, array | callable $handler)
+    public static function get(string $path, array|callable $handler)
     {
-        $uri = $this->base_path === "/" ? $path : $this->base_path.$path;
 
-        $request_uri = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
 
-        $request_method = $_SERVER['REQUEST_METHOD'];
-
-        if($uri === $request_uri && $request_method === self::$request_method){
-            is_callable($handler) && !is_array($handler) ? $this->runCallbackFunc($path,$handler) : $this->handlerInstance($handler);
+        if($_SERVER["REQUEST_METHOD"] === static::GET_METHOD){
+            static::run($path,$handler);
         }
     }
 
+    /**
+     * @param string $path
+     * @param callable|array $handler
+     */
+    public function post(string $path,callable | array $handler)
+    {
+       $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
+
+       if($_SERVER["REQUEST_METHOD"] === static::POST_METHOD){
+           static::run($path,$handler);
+       }
+    }
+
+    /**
+     * @param string $path
+     * @param callable|array $handler
+     */
+    public function put(string $path,callable | array $handler)
+    {
+       $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
+
+       if($_SERVER["REQUEST_METHOD"] === static::PUT_METHOD){
+           static::run($path,$handler);
+       }
+    }
+
+    /**
+     * @param string $path
+     * @param callable|array $handler
+     */
+    public function patch(string $path,callable | array $handler)
+    {
+        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
+
+        if($_SERVER["REQUEST_METHOD"] === static::PATCH_METHOD){
+            static::run($path,$handler);
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param callable|array $handler
+     */
+    public function delete(string $path,callable | array $handler)
+    {
+        $path = static::$collection_path === "/" ? $path : static::$collection_path.$path;
+
+        if($_SERVER["REQUEST_METHOD"] === static::DELETE_METHOD){
+            static::run($path,$handler);
+        }
+    }
+
+    /**
+     * @param $path
+     * @param array|callable $handler
+     * @throws ExceptionAlias
+     */
+    private static function run($path,array | callable $handler)
+    {
+        if(isset(static::$instance[Router::class])){
+
+            $uri = parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH);
+
+            if($uri === $path){
+                is_callable($handler) && !is_array($handler) ?
+                    $handler(new Request(),new Response()) :  static::handleInstance($handler);
+            }
+
+        }else{
+            throw new \Exception("Execute router singleton instance before initiate any route method eg: Router::execute()");
+        }
+    }
 
     /**
      * @param array $handler
+     * @return void
      */
-    private function handlerInstance(array $handler): void
+    private  static  function handleInstance(array $handler): void
     {
         $instance = new $handler[0];
         $instance->{$handler[1]}(new Request(),new Response());
     }
-
-
 }
+

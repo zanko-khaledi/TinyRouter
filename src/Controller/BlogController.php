@@ -18,10 +18,9 @@ class BlogController
          echo "Hello World";
     }
 
-
-    public function all(Request $request,Response $response)
+    public static function all(Request $request,Response $response)
     {
-         echo $response->json("Hello Ferry",200);
+        echo $response->json("Hi Teddy");
     }
 
     public function update()
